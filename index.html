@@ -62,6 +62,14 @@
       border-radius: 6px;
       margin-right: 10px;
     }
+    .footer {
+      margin-top: 60px;
+      font-size: 1rem;
+    }
+    .footer a {
+      color: var(--command-color);
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -73,6 +81,10 @@
   <div id="status" class="status">🔌 Not connected</div>
   <div id="command" class="command" style="display: none">🚀 Current Command: —</div>
   <button id="toggleTheme" class="toggle-button">Toggle Light/Dark Mode</button>
+
+  <div class="footer">
+    💜 Watch the stream: <a href="https://www.twitch.tv/nattik" target="_blank">twitch.tv/nattik</a>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
@@ -179,6 +191,3 @@
   </script>
 </body>
 </html>
-
-
-
