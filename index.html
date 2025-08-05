@@ -111,12 +111,12 @@
         if (!accessCode) return;
 
         const activeKeys = keyOrder.filter(k => keyStates[k]);
-        let cmd = "x";
+        let cmd = "";
 
         if (activeKeys.includes("w") && !activeKeys.includes("s")) {
-          cmd = "w";
+          cmd += "w";
         } else if (activeKeys.includes("s") && !activeKeys.includes("w")) {
-          cmd = "s";
+          cmd += "s";
         }
 
         if (activeKeys.includes("a") && !activeKeys.includes("d")) {
@@ -124,6 +124,8 @@
         } else if (activeKeys.includes("d") && !activeKeys.includes("a")) {
           cmd += "d";
         }
+
+        if (cmd === "") cmd = "x";
 
         db.ref("controls/" + accessCode).set({
           cmd: cmd,
