@@ -131,8 +131,9 @@
       console.log("Sending to:", "/controls/" + accessCode, "CMD:", cmd);
     
       db.ref("controls/" + accessCode).set({
-        cmd: cmd,
-        key: accessCode
+      cmd: cmd,
+      key: accessCode,
+      ts: Date.now()
       });
       commandEl.textContent = "🚀 Current Command: " + (cmd.toUpperCase() || "X");
       }
@@ -174,4 +175,5 @@
   </script>
 </body>
 </html>
+
 
