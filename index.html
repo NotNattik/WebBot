@@ -66,7 +66,7 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      document.body.classList.remove('light-mode'); // Default to dark mode
+      document.body.classList.remove('light-mode');
 
       const toggleButton = document.getElementById('toggleTheme');
       toggleButton.addEventListener('click', () => {
@@ -99,33 +99,57 @@
         statusEl.textContent = `✅ Ready to control: ${robotCode}`;
       }
 
+      const keyOrder = [];
       const keyStates = { w: false, a: false, s: false, d: false };
+
+      function updateCommand() {
+        const activeKeys = keyOrder.filter(k => keyStates[k]);
+        let cmd = "x";
+
+        if (activeKeys.includes("w") && activeKeys.includes("s")) {
+          // Ignore both pressed
+        } else if (activeKeys.includes("w")) {
+          cmd = "w";
+        } else if (activeKeys.includes("s")) {
+          cmd = "s";
+        }
+
+        if (activeKeys.includes("a") && activeKeys.includes("d")) {
+          // Ignore both pressed
+        } else if (activeKeys.includes("a")) {
+          cmd += "a";
+        } else if (activeKeys.includes("d")) {
+          cmd += "d";
+        }
+
+        db.ref("controls/" + robotCode).set({
+          cmd: cmd,
+          key: accessKey
+        });
+        commandEl.textContent = "🚀 Current Command: " + (cmd.toUpperCase() || "X");
+      }
 
       document.addEventListener("keydown", e => {
         const k = e.key.toLowerCase();
-        if (keyStates[k] === false && "wasd".includes(k)) {
-          db.ref("controls/" + robotCode).set({
-            cmd: k,
-            key: accessKey
-          });
-          keyStates[k] = true;
-          commandEl.textContent = "🚀 Current Command: " + k.toUpperCase();
+        if ("wasd".includes(k)) {
+          if (!keyStates[k]) {
+            keyStates[k] = true;
+            keyOrder.push(k);
+            updateCommand();
+          }
         }
       });
 
       document.addEventListener("keyup", e => {
         const k = e.key.toLowerCase();
         if ("wasd".includes(k)) {
-          db.ref("controls/" + robotCode).set({
-            cmd: "x",
-            key: accessKey
-          });
           keyStates[k] = false;
-          commandEl.textContent = "🚀 Current Command: Stopped";
+          const idx = keyOrder.indexOf(k);
+          if (idx !== -1) keyOrder.splice(idx, 1);
+          updateCommand();
         }
       });
     });
   </script>
 </body>
 </html>
-
