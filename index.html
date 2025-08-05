@@ -108,31 +108,35 @@
       const connectButton = document.getElementById('connectButton');
 
       function updateCommand() {
-        if (!accessCode) return;
-
-        const activeKeys = keyOrder.filter(k => keyStates[k]);
-        let cmd = "";
-
-        if (activeKeys.includes("w") && !activeKeys.includes("s")) {
-          cmd += "w";
-        } else if (activeKeys.includes("s") && !activeKeys.includes("w")) {
-          cmd += "s";
-        }
-
-        if (activeKeys.includes("a") && !activeKeys.includes("d")) {
-          cmd += "a";
-        } else if (activeKeys.includes("d") && !activeKeys.includes("a")) {
-          cmd += "d";
-        }
-
-        if (cmd === "") cmd = "x";
-
-        db.ref("controls/" + accessCode).set({
-          cmd: cmd,
-          key: accessCode
-        });
-        commandEl.textContent = "🚀 Current Command: " + (cmd.toUpperCase() || "X");
+      if (!accessCode) return;
+    
+      const activeKeys = keyOrder.filter(k => keyStates[k]);
+      let cmd = "";
+    
+      if (activeKeys.includes("w") && !activeKeys.includes("s")) {
+        cmd += "w";
+      } else if (activeKeys.includes("s") && !activeKeys.includes("w")) {
+        cmd += "s";
       }
+    
+      if (activeKeys.includes("a") && !activeKeys.includes("d")) {
+        cmd += "a";
+      } else if (activeKeys.includes("d") && !activeKeys.includes("a")) {
+        cmd += "d";
+      }
+    
+      if (cmd === "") cmd = "x";
+    
+      // ✅ Log AFTER building the command
+      console.log("Sending to:", "/controls/" + accessCode, "CMD:", cmd);
+    
+      db.ref("controls/" + accessCode).set({
+        cmd: cmd,
+        key: accessCode
+      });
+      commandEl.textContent = "🚀 Current Command: " + (cmd.toUpperCase() || "X");
+      }
+
 
       document.addEventListener("keydown", e => {
         const k = e.key.toLowerCase();
@@ -170,3 +174,4 @@
   </script>
 </body>
 </html>
+
