@@ -14,6 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
 
 <script>
+  // Initialize Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
     authDomain: "webbot-b0c3e.firebaseapp.com",
@@ -26,15 +27,16 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  // Get robot ID and key from URL
   const urlParams = new URLSearchParams(window.location.search);
   const robotCode = urlParams.get('code');
   const accessKey = urlParams.get('key');
   const statusEl = document.getElementById('status');
 
   if (!robotCode || !accessKey) {
-    statusEl.textContent = "Missing ?code=bot1&key=abc123 in URL.";
+    statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
   } else {
-    statusEl.textContent = `Connected as: ${robotCode}`;
+    statusEl.textContent = `✅ Ready to control: ${robotCode}`;
   }
 
   const keyStates = { w: false, a: false, s: false, d: false };
@@ -54,7 +56,7 @@
     const k = e.key.toLowerCase();
     if ("wasd".includes(k)) {
       db.ref("controls/" + robotCode).set({
-        cmd: "x",  // stop
+        cmd: "x",
         key: accessKey
       });
       keyStates[k] = false;
