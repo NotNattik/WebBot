@@ -14,52 +14,52 @@
 <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
 
 <script>
-  // Initialize Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
-    authDomain: "webbot-b0c3e.firebaseapp.com",
-    databaseURL: "https://webbot-b0c3e-default-rtdb.firebaseio.com",
-    projectId: "webbot-b0c3e",
-    storageBucket: "webbot-b0c3e.appspot.com",
-    messagingSenderId: "44076071025",
-    appId: "1:44076071025:web:dc203ccf5cbaf6638ec3d0"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  document.addEventListener("DOMContentLoaded", function () {
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
+      authDomain: "webbot-b0c3e.firebaseapp.com",
+      databaseURL: "https://webbot-b0c3e-default-rtdb.firebaseio.com",
+      projectId: "webbot-b0c3e",
+      storageBucket: "webbot-b0c3e.appspot.com",
+      messagingSenderId: "44076071025",
+      appId: "1:44076071025:web:dc203ccf5cbaf6638ec3d0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  // Get robot ID and key from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const robotCode = urlParams.get('code');
-  const accessKey = urlParams.get('key');
-  const statusEl = document.getElementById('status');
+    const urlParams = new URLSearchParams(window.location.search);
+    const robotCode = urlParams.get('code');
+    const accessKey = urlParams.get('key');
+    const statusEl = document.getElementById('status');
 
-  if (!robotCode || !accessKey) {
-    statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
-  } else {
-    statusEl.textContent = `✅ Ready to control: ${robotCode}`;
-  }
-
-  const keyStates = { w: false, a: false, s: false, d: false };
-
-  document.addEventListener("keydown", e => {
-    const k = e.key.toLowerCase();
-    if (keyStates[k] === false && "wasd".includes(k)) {
-      db.ref("controls/" + robotCode).set({
-        cmd: k,
-        key: accessKey
-      });
-      keyStates[k] = true;
+    if (!robotCode || !accessKey) {
+      statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
+    } else {
+      statusEl.textContent = `✅ Ready to control: ${robotCode}`;
     }
-  });
 
-  document.addEventListener("keyup", e => {
-    const k = e.key.toLowerCase();
-    if ("wasd".includes(k)) {
-      db.ref("controls/" + robotCode).set({
-        cmd: "x",
-        key: accessKey
-      });
-      keyStates[k] = false;
-    }
+    const keyStates = { w: false, a: false, s: false, d: false };
+
+    document.addEventListener("keydown", e => {
+      const k = e.key.toLowerCase();
+      if (keyStates[k] === false && "wasd".includes(k)) {
+        db.ref("controls/" + robotCode).set({
+          cmd: k,
+          key: accessKey
+        });
+        keyStates[k] = true;
+      }
+    });
+
+    document.addEventListener("keyup", e => {
+      const k = e.key.toLowerCase();
+      if ("wasd".includes(k)) {
+        db.ref("controls/" + robotCode).set({
+          cmd: "x",
+          key: accessKey
+        });
+        keyStates[k] = false;
+      }
+    });
   });
 </script>
