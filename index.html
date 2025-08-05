@@ -67,6 +67,10 @@
     .footer {
       margin-top: 60px;
       font-size: 1.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
     .footer a {
       color: var(--twitch-purple);
@@ -74,6 +78,7 @@
       font-weight: bold;
       display: inline-block;
       transition: all 0.4s ease;
+      transform-origin: left center;
     }
     .footer a:hover {
       background: linear-gradient(to right, #00e1ff, #00ff80);
@@ -94,7 +99,8 @@
   <button id="toggleTheme" class="toggle-button">Toggle Light/Dark Mode</button>
 
   <div class="footer">
-    💜 Watch the stream: <a href="https://www.twitch.tv/nattik" target="_blank">twitch.tv/nattik</a>
+    <span>💜 Watch the stream:</span>
+    <a href="https://www.twitch.tv/nattik" target="_blank">twitch.tv/nattik</a>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
