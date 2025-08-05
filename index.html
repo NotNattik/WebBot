@@ -66,13 +66,15 @@
     }
     .mobile-buttons {
       display: none;
-      flex-wrap: wrap;
-      gap: 10px;
+      margin: 30px auto 0;
+      max-width: 300px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
       justify-content: center;
-      margin-top: 30px;
     }
     .mobile-button {
-      padding: 12px 18px;
+      padding: 12px 0;
       font-size: 1.2rem;
       font-weight: bold;
       color: var(--bg-color);
@@ -80,6 +82,11 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+    }
+    .blank-button {
+      background-color: transparent;
+      border: none;
+      cursor: default;
     }
     .footer {
       margin-top: 60px;
@@ -105,7 +112,7 @@
     }
     @media (hover: none) and (pointer: coarse) {
       .mobile-buttons {
-        display: flex;
+        display: grid;
       }
     }
   </style>
@@ -121,13 +128,14 @@
   <button id="toggleTheme" class="toggle-button">Toggle Light/Dark Mode</button>
 
   <div class="mobile-buttons" id="mobileButtons">
-    <button class="mobile-button" data-cmd="w">W</button>
-    <button class="mobile-button" data-cmd="a">A</button>
-    <button class="mobile-button" data-cmd="s">S</button>
-    <button class="mobile-button" data-cmd="d">D</button>
     <button class="mobile-button" data-cmd="wa">WA</button>
+    <button class="mobile-button" data-cmd="w">W</button>
     <button class="mobile-button" data-cmd="wd">WD</button>
+    <button class="mobile-button" data-cmd="a">A</button>
+    <button class="blank-button" disabled></button>
+    <button class="mobile-button" data-cmd="d">D</button>
     <button class="mobile-button" data-cmd="sa">SA</button>
+    <button class="mobile-button" data-cmd="s">S</button>
     <button class="mobile-button" data-cmd="sd">SD</button>
   </div>
 
