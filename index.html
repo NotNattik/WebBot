@@ -5,124 +5,120 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root {
-      --bg-color: #121212;
-      --text-color: #f0f0f0;
-      --status-color: #00e676;
-      --command-color: #90caf9;
-      --twitch-purple: #9146FF;
-      --press-bg: #888888;
-    }
-    body.light-mode {
-      --bg-color: #ffffff;
-      --text-color: #111111;
-      --status-color: #008000;
-      --command-color: #1565c0;
-      --twitch-purple: #9146FF;
-      --press-bg: #cccccc;
-    }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 50px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 1.2rem;
-    }
-    .status {
-      font-weight: bold;
-      margin-top: 20px;
-      color: var(--status-color);
-    }
-    .command {
-      margin-top: 30px;
-      font-size: 1.5rem;
-      color: var(--command-color);
-    }
-    .toggle-button, .connect-button {
-      margin-top: 20px;
-      background-color: transparent;
-      border: 2px solid var(--command-color);
-      color: var(--command-color);
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    #loginForm {
-      margin-top: 30px;
-    }
-    #accessCodeInput {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-right: 10px;
-    }
+  :root {
+    --bg-color: #121212;
+    --text-color: #f0f0f0;
+    --status-color: #00e676;
+    --command-color: #90caf9;
+    --twitch-purple: #9146FF;
+    --press-bg: #888888;
+  }
+  body.light-mode {
+    --bg-color: #ffffff;
+    --text-color: #111111;
+    --status-color: #008000;
+    --command-color: #1565c0;
+    --twitch-purple: #9146FF;
+    --press-bg: #cccccc;
+  }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 50px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  .status {
+    font-weight: bold;
+    margin-top: 20px;
+    color: var(--status-color);
+  }
+  .command {
+    margin-top: 30px;
+    font-size: 1.5rem;
+    color: var(--command-color);
+  }
+  .toggle-button, .connect-button {
+    margin-top: 20px;
+    background-color: transparent;
+    border: 2px solid var(--command-color);
+    color: var(--command-color);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #accessCodeInput {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-right: 10px;
+  }
+  .footer {
+    margin-top: 60px;
+    font-size: 1.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .footer a {
+    color: var(--twitch-purple);
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: all 0.4s ease;
+    transform-origin: left center;
+  }
+  .footer a:hover {
+    background: linear-gradient(to right, #00e1ff, #00ff80);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transform: scale(1.5);
+  }
+
+  /* ✅ Mobile-only controls */
+  @media (hover: none) and (pointer: coarse) {
     .mobile-buttons {
-      display: none;
+      display: grid;
       margin: 30px auto 0;
       max-width: 300px;
-      display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-gap: 10px;
       justify-content: center;
     }
-    .mobile-button {
-      padding: 12px 0;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--bg-color);
-      background-color: var(--command-color);
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0s;
-    }
-    .mobile-button.pressed {
-      background-color: var(--press-bg);
-    }
-    .blank-button {
-      background-color: transparent;
-      border: none;
-      cursor: default;
-    }
-    .footer {
-      margin-top: 60px;
-      font-size: 1.25rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-    }
-    .footer a {
-      color: var(--twitch-purple);
-      text-decoration: none;
-      font-weight: bold;
-      display: inline-block;
-      transition: all 0.4s ease;
-      transform-origin: left center;
-    }
-    .footer a:hover {
-      background: linear-gradient(to right, #00e1ff, #00ff80);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      transform: scale(1.5);
-    }
-    @media (hover: none) and (pointer: coarse) {
-      .mobile-buttons {
-        display: grid;
-      }
-    }
-  </style>
-</head>
+  }
+
+  .mobile-buttons {
+    display: none;
+  }
+  .mobile-button {
+    padding: 12px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--bg-color);
+    background-color: var(--command-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0s;
+  }
+  .mobile-button.pressed {
+    background-color: var(--press-bg);
+  }
+  .blank-button {
+    background-color: transparent;
+    border: none;
+    cursor: default;
+  }
+</style>
+
 <body>
   <h1>🤖 WebBot Controller</h1>
   <div id="loginForm">
@@ -146,9 +142,9 @@
   </div>
 
   <div class="footer">
-    <span>💜 Watch the stream:</span>
-    <a href="https://www.twitch.tv/nattik" target="_blank">twitch.tv/nattik</a>
-  </div>
+  <span>💜 Watch the stream:</span>
+  <a href="https://www.twitch.tv/nattik" target="_blank">twitch.tv/nattik</a>
+</div>
 
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
