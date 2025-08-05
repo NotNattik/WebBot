@@ -64,6 +64,23 @@
       border-radius: 6px;
       margin-right: 10px;
     }
+    .mobile-buttons {
+      display: none;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .mobile-button {
+      padding: 12px 18px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--bg-color);
+      background-color: var(--command-color);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
     .footer {
       margin-top: 60px;
       font-size: 1.25rem;
@@ -86,6 +103,11 @@
       -webkit-text-fill-color: transparent;
       transform: scale(1.5);
     }
+    @media (hover: none) and (pointer: coarse) {
+      .mobile-buttons {
+        display: flex;
+      }
+    }
   </style>
 </head>
 <body>
@@ -97,6 +119,17 @@
   <div id="status" class="status">🔌 Not connected</div>
   <div id="command" class="command" style="display: none">🚀 Current Command: —</div>
   <button id="toggleTheme" class="toggle-button">Toggle Light/Dark Mode</button>
+
+  <div class="mobile-buttons" id="mobileButtons">
+    <button class="mobile-button" data-cmd="w">W</button>
+    <button class="mobile-button" data-cmd="a">A</button>
+    <button class="mobile-button" data-cmd="s">S</button>
+    <button class="mobile-button" data-cmd="d">D</button>
+    <button class="mobile-button" data-cmd="wa">WA</button>
+    <button class="mobile-button" data-cmd="wd">WD</button>
+    <button class="mobile-button" data-cmd="sa">SA</button>
+    <button class="mobile-button" data-cmd="sd">SD</button>
+  </div>
 
   <div class="footer">
     <span>💜 Watch the stream:</span>
@@ -135,6 +168,7 @@
       const commandEl = document.getElementById('command');
       const accessCodeInput = document.getElementById('accessCodeInput');
       const connectButton = document.getElementById('connectButton');
+      const mobileButtons = document.getElementById('mobileButtons');
 
       function connect() {
         const code = accessCodeInput.value.trim();
@@ -148,32 +182,25 @@
         }
       }
 
-      function updateCommand() {
+      function sendCommand(cmd) {
         if (!accessCode) return;
-
-        const activeKeys = keyOrder.filter(k => keyStates[k]);
-        let cmd = "";
-
-        if (activeKeys.includes("w") && !activeKeys.includes("s")) {
-          cmd += "w";
-        } else if (activeKeys.includes("s") && !activeKeys.includes("w")) {
-          cmd += "s";
-        }
-
-        if (activeKeys.includes("a") && !activeKeys.includes("d")) {
-          cmd += "a";
-        } else if (activeKeys.includes("d") && !activeKeys.includes("a")) {
-          cmd += "d";
-        }
-
-        if (cmd === "") cmd = "x";
-
         db.ref("controls/" + accessCode).set({
           cmd: cmd,
           key: accessCode,
           ts: Date.now()
         });
         commandEl.textContent = "🚀 Current Command: " + (cmd.toUpperCase() || "X");
+      }
+
+      function updateCommand() {
+        const activeKeys = keyOrder.filter(k => keyStates[k]);
+        let cmd = "";
+        if (activeKeys.includes("w") && !activeKeys.includes("s")) cmd += "w";
+        else if (activeKeys.includes("s") && !activeKeys.includes("w")) cmd += "s";
+        if (activeKeys.includes("a") && !activeKeys.includes("d")) cmd += "a";
+        else if (activeKeys.includes("d") && !activeKeys.includes("a")) cmd += "d";
+        if (cmd === "") cmd = "x";
+        sendCommand(cmd);
       }
 
       document.addEventListener("keydown", e => {
@@ -197,12 +224,20 @@
         }
       });
 
-      connectButton.addEventListener("click", connect);
+      mobileButtons.querySelectorAll(".mobile-button").forEach(btn => {
+        btn.addEventListener("touchstart", e => {
+          e.preventDefault();
+          sendCommand(btn.dataset.cmd);
+        });
+        btn.addEventListener("touchend", e => {
+          e.preventDefault();
+          sendCommand("x");
+        });
+      });
 
+      connectButton.addEventListener("click", connect);
       accessCodeInput.addEventListener("keydown", e => {
-        if (e.key === "Enter") {
-          connect();
-        }
+        if (e.key === "Enter") connect();
       });
     });
   </script>
