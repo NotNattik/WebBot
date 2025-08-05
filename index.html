@@ -5,11 +5,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #f0f0f0;
+      --status-color: #00e676;
+      --command-color: #90caf9;
+    }
+    body.light-mode {
+      --bg-color: #ffffff;
+      --text-color: #111111;
+      --status-color: #008000;
+      --command-color: #1565c0;
+    }
     body {
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      background-color: #f4f4f4;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       padding: 50px;
+      transition: background-color 0.3s, color 0.3s;
     }
     h1 {
       font-size: 2.5rem;
@@ -21,12 +35,22 @@
     .status {
       font-weight: bold;
       margin-top: 20px;
-      color: #006400;
+      color: var(--status-color);
     }
     .command {
       margin-top: 30px;
       font-size: 1.5rem;
-      color: #333;
+      color: var(--command-color);
+    }
+    .toggle-button {
+      margin-top: 20px;
+      background-color: transparent;
+      border: 2px solid var(--command-color);
+      color: var(--command-color);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -35,12 +59,20 @@
   <p>Use <strong>W, A, S, D</strong> to move. Release to stop.</p>
   <div id="status" class="status">🔌 Connecting...</div>
   <div id="command" class="command">🚀 Current Command: —</div>
+  <button id="toggleTheme" class="toggle-button">Toggle Light/Dark Mode</button>
 
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      document.body.classList.remove('light-mode'); // Default to dark mode
+
+      const toggleButton = document.getElementById('toggleTheme');
+      toggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+      });
+
       const firebaseConfig = {
         apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
         authDomain: "webbot-b0c3e.firebaseapp.com",
@@ -61,7 +93,7 @@
 
       if (!robotCode || !accessKey) {
         statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
-        statusEl.style.color = "#a00";
+        statusEl.style.color = "#ff5252";
         return;
       } else {
         statusEl.textContent = `✅ Ready to control: ${robotCode}`;
@@ -89,11 +121,10 @@
             key: accessKey
           });
           keyStates[k] = false;
-          commandEl.textContent = "🚀 Current Command: Stopped";
+          commandEl.textContent = "🚀 Current Command: X";
         }
       });
     });
   </script>
 </body>
 </html>
-
