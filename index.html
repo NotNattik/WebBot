@@ -84,16 +84,16 @@
   }
 
   /* ✅ Mobile-only controls */
-  @media (hover: none) and (pointer: coarse) {
-    .mobile-buttons {
-      display: grid;
-      margin: 30px auto 0;
-      max-width: 300px;
-      grid-template-columns: repeat(3, 1fr);
-      grid-gap: 10px;
-      justify-content: center;
-    }
+  @media screen and (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .mobile-buttons {
+    display: grid;
+    margin: 30px auto 0;
+    max-width: 300px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    justify-content: center;
   }
+}
 
   .mobile-buttons {
   display: none;
