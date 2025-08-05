@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Robot Control</title>
+  <meta charset="UTF-8" />
+</head>
+<body>
+  <h1>Control the Robot</h1>
+  <p>Use W, A, S, D to move. Let go to stop.</p>
+  <p id="status">Connecting...</p>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
+
+  <script>
+    // === Your Firebase config ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
+      authDomain: "webbot-b0c3e.firebaseapp.com",
+      databaseURL: "https://webbot-b0c3e-default-rtdb.firebaseio.com",
+      projectId: "webbot-b0c3e",
+      storageBucket: "webbot-b0c3e.appspot.com",
+      messagingSenderId: "44076071025",
+      appId: "1:44076071025:web:dc203ccf5cbaf6638ec3d0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // === Get robot code from URL ===
+    const urlParams = new URLSearchParams(window.location.search);
+    const robotCode = urlParams.get('code');
+    const statusEl = document.getElementById('status');
+
+    if (!robotCode) {
+      statusEl.textContent = "Missing ?code=bot1 in URL.";
+    } else {
+      statusEl.textContent = `Connected as: ${robotCode}`;
+    }
+
+    // === Track key states ===
+    const keyStates = { w: false, a: false, s: false, d: false };
+
+    document.addEventListener("keydown", e => {
+      const k = e.key.toLowerCase();
+      if (keyStates[k] === false && "wasd".includes(k)) {
+        db.ref("controls/" + robotCode).set(k);
+        keyStates[k] = true;
+      }
+    });
+
+    document.addEventListener("keyup", e => {
+      const k = e.key.toLowerCase();
+      if ("wasd".includes(k)) {
+        db.ref("controls/" + robotCode).set("x");  // Stop
+        keyStates[k] = false;
+      }
+    });
+  </script>
+</body>
+</html>
