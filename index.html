@@ -1,65 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Robot Control</title>
+  <title>WebBot Controller</title>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1.2rem;
+    }
+    .status {
+      font-weight: bold;
+      margin-top: 20px;
+      color: #006400;
+    }
+    .command {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-  <h1>Control the Robot</h1>
-  <p>Use W, A, S, D to move. Let go to stop.</p>
-  <p id="status">Connecting...</p>
+  <h1>🤖 WebBot Controller</h1>
+  <p>Use <strong>W, A, S, D</strong> to move. Release to stop.</p>
+  <div id="status" class="status">🔌 Connecting...</div>
+  <div id="command" class="command">🚀 Current Command: —</div>
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database-compat.js"></script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const firebaseConfig = {
-      apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
-      authDomain: "webbot-b0c3e.firebaseapp.com",
-      databaseURL: "https://webbot-b0c3e-default-rtdb.firebaseio.com",
-      projectId: "webbot-b0c3e",
-      storageBucket: "webbot-b0c3e.appspot.com",
-      messagingSenderId: "44076071025",
-      appId: "1:44076071025:web:dc203ccf5cbaf6638ec3d0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBZXw_gMsaSQ2N3UiWlRV5W6vdqdycznYE",
+        authDomain: "webbot-b0c3e.firebaseapp.com",
+        databaseURL: "https://webbot-b0c3e-default-rtdb.firebaseio.com",
+        projectId: "webbot-b0c3e",
+        storageBucket: "webbot-b0c3e.appspot.com",
+        messagingSenderId: "44076071025",
+        appId: "1:44076071025:web:dc203ccf5cbaf6638ec3d0"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const robotCode = urlParams.get('code');
-    const accessKey = urlParams.get('key');
-    const statusEl = document.getElementById('status');
+      const urlParams = new URLSearchParams(window.location.search);
+      const robotCode = urlParams.get('code');
+      const accessKey = urlParams.get('key');
+      const statusEl = document.getElementById('status');
+      const commandEl = document.getElementById('command');
 
-    if (!robotCode || !accessKey) {
-      statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
-    } else {
-      statusEl.textContent = `✅ Ready to control: ${robotCode}`;
-    }
-
-    const keyStates = { w: false, a: false, s: false, d: false };
-
-    document.addEventListener("keydown", e => {
-      const k = e.key.toLowerCase();
-      if (keyStates[k] === false && "wasd".includes(k)) {
-        db.ref("controls/" + robotCode).set({
-          cmd: k,
-          key: accessKey
-        });
-        keyStates[k] = true;
+      if (!robotCode || !accessKey) {
+        statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
+        statusEl.style.color = "#a00";
+        return;
+      } else {
+        statusEl.textContent = `✅ Ready to control: ${robotCode}`;
       }
-    });
 
-    document.addEventListener("keyup", e => {
-      const k = e.key.toLowerCase();
-      if ("wasd".includes(k)) {
-        db.ref("controls/" + robotCode).set({
-          cmd: "x",
-          key: accessKey
-        });
-        keyStates[k] = false;
-      }
+      const keyStates = { w: false, a: false, s: false, d: false };
+
+      document.addEventListener("keydown", e => {
+        const k = e.key.toLowerCase();
+        if (keyStates[k] === false && "wasd".includes(k)) {
+          db.ref("controls/" + robotCode).set({
+            cmd: k,
+            key: accessKey
+          });
+          keyStates[k] = true;
+          commandEl.textContent = "🚀 Current Command: " + k.toUpperCase();
+        }
+      });
+
+      document.addEventListener("keyup", e => {
+        const k = e.key.toLowerCase();
+        if ("wasd".includes(k)) {
+          db.ref("controls/" + robotCode).set({
+            cmd: "x",
+            key: accessKey
+          });
+          keyStates[k] = false;
+          commandEl.textContent = "🚀 Current Command: X";
+        }
+      });
     });
-  });
-</script>
+  </script>
+</body>
+</html>
