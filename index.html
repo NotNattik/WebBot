@@ -42,7 +42,7 @@
       font-size: 1.5rem;
       color: var(--command-color);
     }
-    .toggle-button {
+    .toggle-button, .connect-button {
       margin-top: 20px;
       background-color: transparent;
       border: 2px solid var(--command-color);
@@ -52,13 +52,26 @@
       cursor: pointer;
       font-weight: bold;
     }
+    #loginForm {
+      margin-top: 30px;
+    }
+    #accessCodeInput {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>🤖 WebBot Controller</h1>
-  <p>Use <strong>W, A, S, D</strong> to move. Release to stop.</p>
-  <div id="status" class="status">🔌 Connecting...</div>
-  <div id="command" class="command">🚀 Current Command: —</div>
+  <div id="loginForm">
+    <input type="text" id="accessCodeInput" placeholder="Enter access code">
+    <button id="connectButton" class="connect-button">Connect</button>
+  </div>
+  <div id="status" class="status">🔌 Not connected</div>
+  <div id="command" class="command" style="display: none">🚀 Current Command: —</div>
   <button id="toggleTheme" class="toggle-button">Toggle Light/Dark Mode</button>
 
   <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
@@ -85,53 +98,43 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const robotCode = urlParams.get('code');
-      const accessKey = urlParams.get('key');
-      const statusEl = document.getElementById('status');
-      const commandEl = document.getElementById('command');
-
-      if (!robotCode || !accessKey) {
-        statusEl.textContent = "❌ Missing ?code=bot1&key=abc123 in URL.";
-        statusEl.style.color = "#ff5252";
-        return;
-      } else {
-        statusEl.textContent = `✅ Ready to control: ${robotCode}`;
-      }
-
+      let accessCode = null;
       const keyOrder = [];
       const keyStates = { w: false, a: false, s: false, d: false };
 
+      const statusEl = document.getElementById('status');
+      const commandEl = document.getElementById('command');
+      const accessCodeInput = document.getElementById('accessCodeInput');
+      const connectButton = document.getElementById('connectButton');
+
       function updateCommand() {
+        if (!accessCode) return;
+
         const activeKeys = keyOrder.filter(k => keyStates[k]);
         let cmd = "x";
 
-        if (activeKeys.includes("w") && activeKeys.includes("s")) {
-          // Ignore both pressed
-        } else if (activeKeys.includes("w")) {
+        if (activeKeys.includes("w") && !activeKeys.includes("s")) {
           cmd = "w";
-        } else if (activeKeys.includes("s")) {
+        } else if (activeKeys.includes("s") && !activeKeys.includes("w")) {
           cmd = "s";
         }
 
-        if (activeKeys.includes("a") && activeKeys.includes("d")) {
-          // Ignore both pressed
-        } else if (activeKeys.includes("a")) {
+        if (activeKeys.includes("a") && !activeKeys.includes("d")) {
           cmd += "a";
-        } else if (activeKeys.includes("d")) {
+        } else if (activeKeys.includes("d") && !activeKeys.includes("a")) {
           cmd += "d";
         }
 
-        db.ref("controls/" + robotCode).set({
+        db.ref("controls/" + accessCode).set({
           cmd: cmd,
-          key: accessKey
+          key: accessCode
         });
         commandEl.textContent = "🚀 Current Command: " + (cmd.toUpperCase() || "X");
       }
 
       document.addEventListener("keydown", e => {
         const k = e.key.toLowerCase();
-        if ("wasd".includes(k)) {
+        if (accessCode && "wasd".includes(k)) {
           if (!keyStates[k]) {
             keyStates[k] = true;
             keyOrder.push(k);
@@ -142,11 +145,23 @@
 
       document.addEventListener("keyup", e => {
         const k = e.key.toLowerCase();
-        if ("wasd".includes(k)) {
+        if (accessCode && "wasd".includes(k)) {
           keyStates[k] = false;
           const idx = keyOrder.indexOf(k);
           if (idx !== -1) keyOrder.splice(idx, 1);
           updateCommand();
+        }
+      });
+
+      connectButton.addEventListener("click", () => {
+        const code = accessCodeInput.value.trim();
+        if (code) {
+          accessCode = code;
+          statusEl.textContent = `✅ Connected as: ${code}`;
+          commandEl.style.display = "block";
+          document.getElementById('loginForm').style.display = "none";
+        } else {
+          alert("Please enter a valid code.");
         }
       });
     });
